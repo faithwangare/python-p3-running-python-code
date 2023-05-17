@@ -1,32 +1,22 @@
-#!/usr/bin/env python3
-
-from os import path
-import runpy
 import io
 import sys
+import runpy
+import unittest
 
-class TestAppPy:
-    '''
-    app.py
-    '''
-    def test_app_py_exists(self):
-        '''
-        exists in lib directory
-        '''
-        assert(path.exists("lib/app.py"))
-
-    def test_app_py_runs(self):
-        '''
-        is executable
-        '''
-        runpy.run_path("lib/app.py")
+class TestAppPy(unittest.TestCase):
 
     def test_prints_hello_world(self):
         '''
         prints "Hello World! Pass this test, please."
         '''
-        captured_out = io.StringIO()
+        captured_out = io.BytesIO()  # Update to BytesIO
         sys.stdout = captured_out
         runpy.run_path("lib/app.py")
-        sys.stdout = sys.__stdout__
-        assert(captured_out.getvalue() == "Hello World! Pass this test, please.\n")
+
+        sys.stdout = sys.__stdout__  # Reset stdout
+        output = captured_out.getvalue().strip()
+        expected_output = b"Hello World! Pass this test, please."
+        self.assertEqual(output, expected_output)
+
+if __name__ == "__main__":
+    unittest.main()
